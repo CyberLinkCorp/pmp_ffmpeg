@@ -87,6 +87,20 @@ int ff_vorbis_comment(AVFormatContext *as, AVDictionary **m,
                       const uint8_t *buf, int size,
                       int parse_picture)
 {
+	return ff_vorbis_comment_internal(as, m, buf, size, parse_picture, 1);
+}
+
+int ff_vorbis_comment_new(AVFormatContext *as, AVDictionary **m,
+	const uint8_t *buf, int size,
+	int parse_picture)
+{
+	return ff_vorbis_comment_internal(as, m, buf, size, parse_picture, 0);
+}
+
+int ff_vorbis_comment_internal(AVFormatContext *as, AVDictionary **m,
+                      const uint8_t *buf, int size,
+					  int parse_picture, int isAppend)
+{
     const uint8_t *p   = buf;
     const uint8_t *end = buf + size;
     int updates        = 0;
@@ -172,12 +186,11 @@ int ff_vorbis_comment(AVFormatContext *as, AVDictionary **m,
                 }
             } else if (!ogm_chapter(as, tt, ct)) {
                 updates++;
-                if (av_dict_get(*m, tt, NULL, 0)) {
+                if (isAppend && av_dict_get(*m, tt, NULL, 0)) {
                     av_dict_set(m, tt, ";", AV_DICT_APPEND);
                 }
                 av_dict_set(m, tt, ct,
-                            AV_DICT_DONT_STRDUP_KEY |
-                            AV_DICT_APPEND);
+                            (isAppend ? AV_DICT_DONT_STRDUP_KEY | AV_DICT_APPEND : AV_DICT_DONT_STRDUP_KEY | AV_DICT_MULTIKEY));
                 av_freep(&ct);
             }
         }

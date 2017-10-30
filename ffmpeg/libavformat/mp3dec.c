@@ -28,6 +28,7 @@
 #include "avformat.h"
 #include "internal.h"
 #include "avio_internal.h"
+#include "apetag.h"
 #include "id3v2.h"
 #include "id3v1.h"
 #include "replaygain.h"
@@ -353,6 +354,8 @@ static int mp3_read_header(AVFormatContext *s)
 
     s->pb->maxsize = -1;
     off = avio_tell(s->pb);
+	
+	ff_ape_parse_tag(s);
 
     if (!av_dict_get(s->metadata, "", NULL, AV_DICT_IGNORE_SUFFIX))
         ff_id3v1_read(s);

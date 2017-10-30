@@ -131,7 +131,16 @@ int64_t ff_ape_parse_tag(AVFormatContext *s)
 
     avio_read(pb, buf, 8);     /* APETAGEX */
     if (strncmp(buf, APE_TAG_PREAMBLE, 8)) {
-        return 0;
+        if (file_size < APE_TAG_FOOTER_BYTES + 128)
+			return 0;
+		
+		avio_seek(pb, file_size - APE_TAG_FOOTER_BYTES - 128, SEEK_SET);
+		
+		avio_read(pb, buf, 8);     /* APETAGEX */
+		if (strncmp(buf, APE_TAG_PREAMBLE, 8))
+			return 0;
+		
+        file_size -= 128;
     }
 
     val = avio_rl32(pb);       /* APE tag version */

@@ -132,6 +132,13 @@ extern const struct ogg_codec ff_vp8_codec;
 
 int ff_vorbis_comment(AVFormatContext *ms, AVDictionary **m,
                       const uint8_t *buf, int size, int parse_picture);
+					  
+int ff_vorbis_comment_new(AVFormatContext *ms, AVDictionary **m,
+                      const uint8_t *buf, int size, int parse_picture);
+
+int ff_vorbis_comment_internal(AVFormatContext *as, AVDictionary **m,
+	const uint8_t *buf, int size,
+	int parse_picture, int isAppend);
 
 int ff_vorbis_stream_comment(AVFormatContext *as, AVStream *st,
                              const uint8_t *buf, int size);
